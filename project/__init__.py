@@ -1,42 +1,35 @@
 import os
 
-from flask import Flask, jsonify
-from flask_restful import Resource, Api
+from flask import Flask  # new
 from flask_sqlalchemy import SQLAlchemy
 
 
-# instantiate the app
-app = Flask(__name__)
-
-api = Api(app)
-
-# set config
-app_settings = os.getenv('APP_SETTINGS')
-app.config.from_object(app_settings)
-
 # instantiate the db
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 
-# model
-class User(db.Model):  # new
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(128), nullable=False)
-    email = db.Column(db.String(128), nullable=False)
-    active = db.Column(db.Boolean(), default=True, nullable=False)
+# Application factory
+def create_app(script_info=None):
 
-    def __init__(self, username, email):
-        self.username = username
-        self.email = email
+    # instantiate the app
+    app = Flask(__name__)
 
+    # set config
+    app_settings = os.getenv('APP_SETTINGS')
+    app.config.from_object(app_settings)
 
-class Ping(Resource):
-    def get(self):
-        return {
-            'status': 'success',
-            'message': 'pong!'
-        }
+    # set up extensions
+    db.init_app(app)
 
+    # register blueprints
+    from project.api.ping import ping_blueprint
+    app.register_blueprint(ping_blueprint)
 
-api.add_resource(Ping, '/ping')
+    # shell context for flask cli
+    # Register the app and db to the shell; To work with the application context and the database
+    # without having to import them directly into the shell
+    @app.shell_context_processor
+    def ctx():
+        return {'app': app, 'db': db}
+
+    return app
