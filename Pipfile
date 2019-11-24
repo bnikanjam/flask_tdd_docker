@@ -10,6 +10,7 @@ flask = "==1.1.1"
 flask-restful = "==0.3.7"
 flask-sqlalchemy = "==2.4.0"
 psycopg2-binary = "==2.8.3"
+pytest = "*"
 
 [requires]
 python_version = "3.7"
