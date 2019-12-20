@@ -1,7 +1,6 @@
 import json
 
-from project.api.models import User
-from project import db
+from project.tests.utils import add_user
 
 
 def test_add_user(test_app, test_database):
@@ -71,14 +70,10 @@ def test_add_user_duplicate_email(test_app, test_database):
 
 
 def test_single_user(test_app, test_database):
-    user = User(username='steve', email='steve@apple.com')
-    db.session.add(user)
-    db.session.commit()
-
+    user = add_user('steve', 'steve@apple.com')
     client = test_app.test_client()
     resp = client.get(f'/users/{user.id}')
     data = json.loads(resp.data.decode())
-
     assert resp.status_code == 200
     assert 'steve' in data['data']['username']
     assert 'steve@apple.com' in data['data']['email']
