@@ -1,6 +1,6 @@
 import json
 
-from project.tests.utils import add_user
+from project.tests.utils import add_user, recreate_db
 
 
 def test_add_user(test_app, test_database):
@@ -99,6 +99,7 @@ def test_single_user_incorrect_id(test_app, test_database):
 
 
 def test_all_users(test_app, test_database):
+    recreate_db()
     add_user('Ali', 'g@apple.com')
     add_user('Iman', 'iman@wework.com')
     add_user('Elham', 'elham@opentable.com')

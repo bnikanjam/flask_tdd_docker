@@ -37,6 +37,14 @@ class UsersList(Resource):
             db.session.rollback()
             return response_object, 400
 
+    def get(self):
+        response_object = {
+            'status': 'success',
+            'data': {
+                'users': [user.to_json() for user in User.query.all()]
+            }
+        }
+        return response_object, 200
 
 class Users(Resource):
     def get(self, user_id):
