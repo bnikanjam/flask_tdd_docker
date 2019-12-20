@@ -17,12 +17,14 @@ ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV production
 ENV APP_SETTINGS project.config.ProductionConfig
 
-# Install app's dependencies with Pipenv excluding development tools
+# Install app's dependencies with Pipenv including development tools
 COPY ./Pipfile /usr/src/app/Pipfile
 COPY ./Pipfile.lock /usr/src/app/Pipfile.lock
 RUN pip install --upgrade pip
 RUN pip install pipenv
 RUN pipenv install --system
+RUN pipenv install --system --dev
+
 
 # Add app
 COPY . /usr/src/app
