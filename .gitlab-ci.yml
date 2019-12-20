@@ -3,6 +3,7 @@ image: docker:stable
 stages:
   - build
   - test
+  - deploy
 
 variables:
   IMAGE: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}
@@ -38,3 +39,21 @@ test:
     - flake8 project
     - black project --check
     - isort project/**/*.py --check-only
+
+deploy:
+  stage: deploy
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    HEROKU_APP_NAME: tdd-flask-docker
+    HEROKU_REGISTRY_IMAGE: registry.heroku.com/${HEROKU_APP_NAME}/web
+  script:
+    - apk add --no-cache curl
+    - docker build
+        --tag $HEROKU_REGISTRY_IMAGE
+        --file ./Dockerfile.production
+        "."
+    - docker login -u _ -p $HEROKU_AUTH_TOKEN registry.heroku.com
+    - docker push $HEROKU_REGISTRY_IMAGE
+    - ./release.sh
