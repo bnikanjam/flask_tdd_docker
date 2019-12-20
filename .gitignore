@@ -1,4 +1,4 @@
-# Created by .ignore support plugin (hsz.mobi)
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -155,6 +155,7 @@ Temporary Items
 
 ### IDE
 /.idea/
+.vscode/
 
 # File-based project format
 *.iws
@@ -183,4 +184,3 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-.vscode/
