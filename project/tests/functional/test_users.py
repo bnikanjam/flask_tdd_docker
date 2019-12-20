@@ -96,3 +96,21 @@ def test_single_user_incorrect_id(test_app, test_database):
     assert resp.status_code == 404
     assert 'User does not exist' in data['message']
     assert 'fail' in data['status']
+
+
+def test_all_users(test_app, test_database):
+    add_user('Ali', 'g@apple.com')
+    add_user('Iman', 'iman@wework.com')
+    add_user('Elham', 'elham@opentable.com')
+    client = test_app.test_client()
+    resp = client.get('/users')
+    data = json.loads(resp.data.decode())
+    assert resp.status_code == 200
+    assert len(data['data']['users']) == 3
+    assert 'Ali' in data['data']['users'][0]['username']
+    assert 'g@apple.com' in data['data']['users'][0]['email']
+    assert 'Iman' in data['data']['users'][1]['username']
+    assert 'iman@wework.com' in data['data']['users'][1]['email']
+    assert 'Elham' in data['data']['users'][2]['username']
+    assert 'elham@opentable.com' in data['data']['users'][2]['email']
+    assert 'success' in data['status']
