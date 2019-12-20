@@ -15,19 +15,21 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# add and install requirements
+# Install app's dependencies with Pipenv including development tools
 COPY ./Pipfile.lock .
 COPY ./Pipfile  .
 RUN pip install --upgrade pip
-RUN pip install pipenv && pipenv install --system
+RUN pip install pipenv
+RUN pipenv install --system
+RUN pipenv install --system --dev
 
-# add entrypoint.sh
+
+# Add entrypoint.sh
 COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-# add app
-#COPY . .
+# Add app
 COPY . /usr/src/app
 
-# run server
+# Run flask development server
 CMD python manage.py run -h 0.0.0.0
