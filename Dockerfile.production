@@ -17,7 +17,7 @@ ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV production
 ENV APP_SETTINGS project.config.ProductionConfig
 
-# Install app's dependencies with Pipenv
+# Install app's dependencies with Pipenv excluding development tools
 COPY ./Pipfile /usr/src/app/Pipfile
 COPY ./Pipfile.lock /usr/src/app/Pipfile.lock
 RUN pip install --upgrade pip
@@ -27,9 +27,9 @@ RUN pipenv install --system
 # Add app
 COPY . /usr/src/app
 
-# Create and witche to a non-root user
+# Create and switche to a non-root user
 RUN adduser -D myuser
 USER myuser
 
-# Run gunicorn
+# Run Gunicorn server for production
 CMD gunicorn --bind 0.0.0.0:$PORT manage:app
