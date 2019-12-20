@@ -1,0 +1,35 @@
+# Pull official base image
+FROM python:3.7.4-alpine
+
+# Install dependencies
+RUN apk update && \
+    apk add --virtual build-deps gcc python-dev musl-dev && \
+    apk add postgresql-dev && \
+    apk add netcat-openbsd
+
+# Set working directory
+#RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Set environment varibles
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV FLASK_ENV production
+ENV APP_SETTINGS project.config.ProductionConfig
+
+# Install app's dependencies with Pipenv
+COPY ./Pipfile /usr/src/app/Pipfile
+COPY ./Pipfile.lock /usr/src/app/Pipfile.lock
+RUN pip install --upgrade pip
+RUN pip install pipenv
+RUN pipenv install --system
+
+# Add app
+COPY . /usr/src/app
+
+# Create and witche to a non-root user
+RUN adduser -D myuser
+USER myuser
+
+# Run gunicorn
+CMD gunicorn --bind 0.0.0.0:$PORT manage:app
