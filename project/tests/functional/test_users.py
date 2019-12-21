@@ -154,11 +154,7 @@ def test_update_user(test_app, test_database):
 
 def test_update_user_invalid_json(test_app, test_database):
     client = test_app.test_client()
-    resp = client.put(
-        "/users/1",
-        data=json.dumps({}),
-        content_type="application/json",
-    )
+    resp = client.put("/users/1", data=json.dumps({}), content_type="application/json")
     data = json.loads(resp.data.decode())
     assert resp.status_code == 400
     assert "Invalid payload." in data["message"]
